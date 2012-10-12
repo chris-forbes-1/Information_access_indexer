@@ -9,29 +9,40 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.IndexWriter;
+
+import org.apache.tika.metadata.Metadata;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.html.HtmlParser;
+import org.apache.tika.sax.BodyContentHandler;
+import org.apache.tika.sax.LinkContentHandler;
+import org.apache.tika.sax.TeeContentHandler;
+import org.apache.tika.sax.ToHTMLContentHandler;
+import org.xml.sax.ContentHandler;
 @SuppressWarnings("unused")
 public class Parser {
 
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) throws Exception {
+	public static void main(String fileDirectory) throws Exception {
 		String files;
-		File folder = new File("java");
+		if(fileDirectory == " "){
+			throw new FilePathException("Invalid path");
+		}
+				
+		File folder = new File(fileDirectory);
 		File[] listOfFolders = folder.listFiles();
-		System.out.println("Pre-parsing root index: ");
-		for(int i = 0 ; i < listOfFolders.length;i++)
+		LinkContentHandler linkHandler = new LinkContentHandler();
+        ContentHandler textHandler = new BodyContentHandler();
+        ToHTMLContentHandler toHTMLHandler = new ToHTMLContentHandler();
+        TeeContentHandler teeHandler = new TeeContentHandler(linkHandler, textHandler, toHTMLHandler);
+        Metadata metadata = new Metadata();
+        ParseContext parseContext = new ParseContext();
+        HtmlParser parser = new HtmlParser();
+        
+		for(int i = 0; i < listOfFolders.length;i++)
 		{
-			System.out.println(listOfFolders[i].getAbsoluteFile().getName());
-			if(listOfFolders[i].isDirectory())
-			{
-				System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<Directory hit");
-				String[] SubFiles = listOfFolders[i].list();
-				for(int x = 0; x < SubFiles.length; x++)
-				{
-					System.out.println(SubFiles[x]);
-				}
-			}
+			
 		}
 	}
 }
