@@ -1,4 +1,4 @@
-package indexer;
+package exception.custom;
 
 public class FilePathException extends Exception {
 	/**

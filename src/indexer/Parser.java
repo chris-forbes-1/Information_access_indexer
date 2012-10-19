@@ -52,31 +52,49 @@ public class Parser {
 	/*
 	 * @return ArrayList<String> Extracted_text
 	 */
-	private static ArrayList<String> HTMLParse_Me(String fileToParsePath) throws MissingPath
+	public static ArrayList<String> HTMLParse_Me(String fileToParsePath) throws MissingPath
 	{// prepair the parser to look for Microsoft IE specific tags (Not sure if the data set has this as it is fairly old but just incase)
 		MicrosoftConditionalCommentTagTypes.register(); 
 		
 		Source src_to_work_with = null;
 		
-		try {
-			
-			 src_to_work_with = new Source(new URL(fileToParsePath));
-		} catch (MalformedURLException e) {
-			throw new MissingPath("Malformed URL");
-		} catch (IOException e) {
-			throw new MissingPath("IOException");
-		}
+		src_to_work_with = new Source(fileToParsePath);
 		src_to_work_with.fullSequentialParse();
 		
-		for(Element E: src_to_work_with.getAllElements())
-		{
-			System.out.println(E.toString());
+		System.out.println("Document title:");
+		String title=getTitle(src_to_work_with);
+		System.out.println(title==null ? "(none)" : title);
+
+		System.out.println("\nDocument description:");
+		String description=getMetaValue(src_to_work_with,"description");
+		System.out.println(description==null ? "(none)" : description);
+
+		System.out.println("\nDocument keywords:");
+		String keywords=getMetaValue(src_to_work_with,"keywords");
+		System.out.println(keywords==null ? "(none)" : keywords);
+	
+		
+		
+		
+		
+		
+		return null;
+	}
+	private static String getTitle(Source source) {
+		Element titleElement=source.getFirstElement(HTMLElementName.TITLE);
+		if (titleElement==null) return null;
+		// TITLE element never contains other tags so just decode it collapsing whitespace:
+		return CharacterReference.decodeCollapseWhiteSpace(titleElement.getContent());
+	}
+
+	private static String getMetaValue(Source source, String key) {
+		for (int pos=0; pos<source.length();) {
+			StartTag startTag=source.getNextStartTag(pos,"name",key,false);
+			if (startTag==null) return null;
+			if (startTag.getName()==HTMLElementName.META)
+				return startTag.getAttributeValue("content"); // Attribute values are automatically decoded
+			pos=startTag.getEnd();
 		}
-		
-		
-		
-		
-		
 		return null;
 	}
 }
