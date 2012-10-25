@@ -80,24 +80,29 @@ public class Parser_reader {
 	
 	@SuppressWarnings("deprecation")
 	public static void getDirContents(File dir) {
-		Document d = new Document();
+		Document d;
 		
 		try {
 			for (File file : dir.listFiles()) {
+				 d = new Document();
 				if(file.getName().endsWith(".htm")) {
 					System.out.println("\tFile: " + file.getCanonicalPath());
 					File input = new File(file.getCanonicalPath());
 					org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");
 					System.out.println("Indexing"+ file.getName());
 					d.add(new Field("title", doc.getElementsByTag("title").toString().substring(7, doc.getElementsByTag("title").toString().length()-8), Field.Store.YES, Field.Index.ANALYZED));
-//					for (Element table : doc.select("table.tablehead")) {
-//				        for (Element row : table.select("tr")) {
-//				            Elements tds = row.select("td");
-//				            if (tds.size() > 6) {
-//				                System.out.println(tds.get(0).text() + ":" + tds.get(1).text());
-//				            }
-//				        }
-//				    }
+					for (Element table : doc.select(file.getName())) {
+				        for (Element row : table.select("tr")) {
+				            Elements tds = row.select("td");
+				            if (tds.size() > 6) {
+				                System.out.println(tds.get(0).text() + ":" + tds.get(1).text());
+				                d.add(new Field("td0",tds.get(0).text(),Field.Store.YES, Field.Index.ANALYZED));
+				                d.add(new Field("td1",tds.get(1).text(),Field.Store.YES, Field.Index.ANALYZED));
+				                
+				            }
+				        }
+				        	
+				    }
 					writer.addDocument(d);
 					
 					
