@@ -23,12 +23,14 @@ import org.jsoup.*;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+@SuppressWarnings("unused")
 public class Parser_reader {
 	private static IndexWriter writer;
 	private static Analyzer analyzer;
 	/**
 	 * @param args
 	 */
+	@SuppressWarnings("deprecation")
 	public static void main(String[] args) throws Exception {
 		 init();
 		File currentDirectory = new File("java");
@@ -38,16 +40,18 @@ public class Parser_reader {
 				System.out.println("\tFile: " + x.getCanonicalPath());
 				File input = new File(x.getCanonicalPath());
 				org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");
-				System.out.println("Title: " + doc.getElementsByTag("title").toString().substring(7, doc.getElementsByTag("title").toString().length()-8));
-				System.out.println("Body: " + doc.getElementsByTag("body"));
+				//System.out.println("Title: " + doc.getElementsByTag("title").text().substring(7, doc.getElementsByTag("title").text().length()-8));
+				System.out.println("Body: " + doc.getElementsByTag("body").text());
 			}
 		}
 		
 		getDirContents(currentDirectory);
-		
+		writer.optimize();
+		writer.close();
 	}
 
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation" })
+	
 	public static boolean init(){
 		File directory = new File("java");
 		SimpleFSDirectory dir;
@@ -78,7 +82,7 @@ public class Parser_reader {
 	
 	
 	
-	@SuppressWarnings("deprecation")
+	
 	public static void getDirContents(File dir) {
 		Document d;
 		
@@ -89,8 +93,9 @@ public class Parser_reader {
 					System.out.println("\tFile: " + file.getCanonicalPath());
 					File input = new File(file.getCanonicalPath());
 					org.jsoup.nodes.Document doc = Jsoup.parse(input, "UTF-8");
-					System.out.println("Indexing"+ file.getName());
-					d.add(new Field("title", doc.getElementsByTag("title").toString().substring(7, doc.getElementsByTag("title").toString().length()-8), Field.Store.YES, Field.Index.ANALYZED));
+					System.out.println("Indexing: "+ file.getName());
+					d.add(new Field("title", doc.getElementsByTag("title").text(), Field.Store.YES, Field.Index.ANALYZED));
+					d.add(new Field("body",doc.getElementsByTag("body").text(),Field.Store.YES,Field.Index.ANALYZED));
 					for (Element table : doc.select(file.getName())) {
 				        for (Element row : table.select("tr")) {
 				            Elements tds = row.select("td");
@@ -103,6 +108,7 @@ public class Parser_reader {
 				        }
 				        	
 				    }
+					
 					writer.addDocument(d);
 					
 					
