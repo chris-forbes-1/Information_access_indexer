@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-	<classpathentry kind="lib" path="lucene-core-3.6.1.jar"/>
-	<classpathentry kind="lib" path="jsoup-1.7.1.jar"/>
+	<classpathentry kind="lib" path="lucene-core-3.6.1.jar" sourcepath="/Users/christopherforbes/svn/lucene/lucene_trunk/lucene"/>
+	<classpathentry kind="lib" path="jsoup-1.7.1.jar" sourcepath="/Users/christopherforbes/Downloads/jsoup-1.7.1-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
